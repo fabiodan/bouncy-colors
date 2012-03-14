@@ -52,10 +52,22 @@
             ball.y += ball.speed * Math.sin(radians);
         }
 
+        function collide() {
+
+            // Walls collision detection.
+            if ( ball.x - ball.radius <= 0 || ball.x + ball.radius >= canvas.width) {
+                ball.direction = 180 - ball.direction;
+            }
+            if ( ball.y - ball.radius <= 0 || ball.y + ball.radius >= canvas.height) {
+                ball.direction = 360 - ball.direction;
+            }
+        }
+
         function gameCycle() {
             window.requestAnimFrame(gameCycle);
-            draw();
             update();
+            collide();
+            draw();
         }
 
         return {
