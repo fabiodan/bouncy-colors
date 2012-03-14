@@ -24,8 +24,7 @@ var bouncyColors = (function() {
         y : 50,
         radius : 10,
         color : "#0000FF",
-        // direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
-direction : 35, // Degrees.
+        direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
         speed : 5
     };
 
