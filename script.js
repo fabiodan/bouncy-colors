@@ -19,20 +19,22 @@ var bouncyColors = (function() {
     var game = document.querySelector("#bouncy-colors");
     var canvas = game.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var balls = new Array(20);
+    var balls = new Array(10);
 
-    for (var i = 0; i < balls.length; i++) {
-        var ball = {
-            radius : 10,
-            color : "#0000FF",
-            direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
-            speed : 10
-        };
+    function createGameObjects() {
+        for (var i = 0; i < balls.length; i++) {
+            var ball = {
+                radius : 20,
+                color : "#0000FF",
+                direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
+                speed : 2
+            };
 
-        ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
-        ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
+            ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
+            ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
 
-        balls[i] = ball;
+            balls[i] = ball;
+        }
     }
 
     // Update game objects data.
@@ -65,6 +67,7 @@ var bouncyColors = (function() {
 
     // Draw the screen relying on objects data.
     function draw() {
+
         // Cleaning screen.
         ctx.clearRect(0, 0, 500, 500);
 
@@ -72,12 +75,36 @@ var bouncyColors = (function() {
             // Drawing the ball.
             ctx.beginPath();
             ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
-            ctx.fillStyle = ball.color;
+            ctx.fillStyle = balls[i].color;
             ctx.fill();
         }
     }
 
+    function bindEvents() {
+
+        function checkHit(e) {
+            var x = e.offsetX;
+            var y = e.offsetY;
+
+            for (var i = 0; i < balls.length; i++) {
+                
+                // Applying Pythagorean equation to find the distance 
+                // between the click and the center of the circle. 
+                var dx = x - balls[i].x; // Δx.
+                var dy = y - balls[i].y; // Δy.
+                var d = Math.sqrt(dx * dx + dy * dy); // Distance.
+
+                if (d <= balls[i].radius) { // If circle is hit.
+                    balls[i].color = (balls[i].color === "red") ? "blue" : "red";
+                }
+            }
+        }
+
+        canvas.addEventListener("mousedown", checkHit, false);
+    }
+
     function gameCycle() {
+
         window.requestAnimFrame(gameCycle);
         update();
         collide();
@@ -86,7 +113,10 @@ var bouncyColors = (function() {
 
     return {
         init : function() {
+
+            createGameObjects();
             draw();
+            bindEvents();
             gameCycle();
         }
     };
