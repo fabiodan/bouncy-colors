@@ -71,7 +71,7 @@ var bouncyColors = (function() {
     function drawObjects() {
 
         // Cleaning screen.
-        ctx.clearRect(0, 0, 500, 500);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (var i = 0; i < balls.length; i++) {
             // Drawing the ball.
