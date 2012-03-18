@@ -58,9 +58,11 @@ var bouncyColors = (function() {
             // Walls collision detection.
             if ( balls[i].x - balls[i].radius <= 0 || balls[i].x + balls[i].radius >= canvas.width) {
                 balls[i].direction = 180 - balls[i].direction;
+                updateObjectsData();                
             }
             if ( balls[i].y - balls[i].radius <= 0 || balls[i].y + balls[i].radius >= canvas.height) {
                 balls[i].direction = 360 - balls[i].direction;
+                updateObjectsData();                
             }
         }
     }    
