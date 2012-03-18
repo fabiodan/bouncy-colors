@@ -38,7 +38,7 @@ var bouncyColors = (function() {
     }
 
     // Update game objects data.
-    function update() {
+    function updateObjectsData() {
 
         for (var i = 0; i < balls.length; i++) {
 
@@ -51,7 +51,7 @@ var bouncyColors = (function() {
         }
     }
 
-    function collide() {
+    function checkWallsCollision() {
 
         for (var i = 0; i < balls.length; i++) {
 
@@ -66,7 +66,7 @@ var bouncyColors = (function() {
     }    
 
     // Draw the screen relying on objects data.
-    function draw() {
+    function drawObjects() {
 
         // Cleaning screen.
         ctx.clearRect(0, 0, 500, 500);
@@ -82,7 +82,7 @@ var bouncyColors = (function() {
 
     function bindEvents() {
 
-        function checkHit(e) {
+        function checkObjectClick(e) {
             var x = e.offsetX;
             var y = e.offsetY;
 
@@ -94,30 +94,30 @@ var bouncyColors = (function() {
                 var dy = y - balls[i].y; // Δy.
                 var d = Math.sqrt(dx * dx + dy * dy); // Distance.
 
-                if (d <= balls[i].radius) { // If circle is hit.
+                if (d <= balls[i].radius) { // If circle is clicked.
                     balls[i].color = (balls[i].color === "red") ? "blue" : "red";
                 }
             }
         }
 
-        canvas.addEventListener("mousedown", checkHit, false);
+        canvas.addEventListener("mousedown", checkObjectClick, false);
     }
 
-    function gameCycle() {
+    function setGameCycle() {
 
-        window.requestAnimFrame(gameCycle);
-        update();
-        collide();
-        draw();
+        window.requestAnimFrame(setGameCycle);
+        updateObjectsData();
+        checkWallsCollision();
+        drawObjects();
     }
 
     return {
         init : function() {
 
             createGameObjects();
-            draw();
+            drawObjects();
             bindEvents();
-            gameCycle();
+            setGameCycle();
         }
     };
 })();
