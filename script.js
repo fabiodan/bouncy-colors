@@ -30,10 +30,11 @@ var bouncyColors = (function() {
                 speed : 2
             };
 
+            // Setting the ball position, keeping the limits based on the ball radius instead of its center.
             ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
             ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
 
-            balls[i] = ball;
+            balls[i] = ball; // Populating balls collection.
         }
     }
 
@@ -85,8 +86,10 @@ var bouncyColors = (function() {
     function bindEvents() {
 
         function checkObjectClick(e) {
-            var x = e.offsetX;
-            var y = e.offsetY;
+
+            // Mouse coordinates.
+            var x = e.offsetX; 
+            var y = e.offsetY; 
 
             for (var i = 0; i < balls.length; i++) {
                 
