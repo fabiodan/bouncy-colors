@@ -19,47 +19,61 @@ var bouncyColors = (function() {
     var game = document.querySelector("#bouncy-colors");
     var canvas = game.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var ball = {
-        x : 50,
-        y : 50,
-        radius : 10,
-        color : "#0000FF",
-        direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
-        speed : 5
-    };
+    var balls = new Array(20);
 
-    // Draw the screen relying on objects data.
-    function draw() {
-        ctx.beginPath();
+    for (var i = 0; i < balls.length; i++) {
+        var ball = {
+            radius : 10,
+            color : "#0000FF",
+            direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
+            speed : 10
+        };
 
-        // Cleaning screen.
-        ctx.clearRect(0, 0, 500, 500);
+        ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
+        ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
 
-        // Drawing ball.
-        ctx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = ball.color;
-        ctx.fill();
+        balls[i] = ball;
     }
 
     // Update game objects data.
     function update() {
 
-        // JavaScript trig functions expect or return angles in radians.
-        var radians = ball.direction * Math.PI / 180;
+        for (var i = 0; i < balls.length; i++) {
 
-        // Using trig functions to find the x and y values.
-        ball.x += ball.speed * Math.cos(radians);
-        ball.y += ball.speed * Math.sin(radians);
+            // JavaScript trig functions expect or return angles in radians.
+            var radians = balls[i].direction * Math.PI / 180;
+
+            // Using trig functions to find the x and y values.
+            balls[i].x += balls[i].speed * Math.cos(radians);
+            balls[i].y += balls[i].speed * Math.sin(radians);
+        }
     }
 
     function collide() {
 
-        // Walls collision detection.
-        if ( ball.x - ball.radius <= 0 || ball.x + ball.radius >= canvas.width) {
-            ball.direction = 180 - ball.direction;
+        for (var i = 0; i < balls.length; i++) {
+
+            // Walls collision detection.
+            if ( balls[i].x - balls[i].radius <= 0 || balls[i].x + balls[i].radius >= canvas.width) {
+                balls[i].direction = 180 - balls[i].direction;
+            }
+            if ( balls[i].y - balls[i].radius <= 0 || balls[i].y + balls[i].radius >= canvas.height) {
+                balls[i].direction = 360 - balls[i].direction;
+            }
         }
-        if ( ball.y - ball.radius <= 0 || ball.y + ball.radius >= canvas.height) {
-            ball.direction = 360 - ball.direction;
+    }    
+
+    // Draw the screen relying on objects data.
+    function draw() {
+        // Cleaning screen.
+        ctx.clearRect(0, 0, 500, 500);
+
+        for (var i = 0; i < balls.length; i++) {
+            // Drawing the ball.
+            ctx.beginPath();
+            ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
         }
     }
 
@@ -72,6 +86,7 @@ var bouncyColors = (function() {
 
     return {
         init : function() {
+            draw();
             gameCycle();
         }
     };
