@@ -90,6 +90,8 @@ var bouncyColors = (function() {
             // Mouse coordinates.
             var mouseX = e.offsetX; 
             var mouseY = e.offsetY; 
+
+            var tolerance = 4; // Making the player happier. :)
             var shorterDistance = 999999;
             var clickedBall = null;
 
@@ -102,7 +104,7 @@ var bouncyColors = (function() {
                 var d = Math.sqrt(dx * dx + dy * dy); // Distance.
 
                 // Avoiding two circles of being selected in the same click.
-                if ((d <= balls[i].radius) && d < shorterDistance) {
+                if ((d <= balls[i].radius + tolerance) && d < shorterDistance) {
                     clickedBall = balls[i];
                     shorterDistance = d; // Let's keep the shorter distance value to decide which ball was clicked.
                 }
