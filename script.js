@@ -88,20 +88,28 @@ var bouncyColors = (function() {
         function checkObjectClick(e) {
 
             // Mouse coordinates.
-            var x = e.offsetX; 
-            var y = e.offsetY; 
+            var mouseX = e.offsetX; 
+            var mouseY = e.offsetY; 
+            var shorterDistance = 999999;
+            var clickedBall = null;
 
             for (var i = 0; i < balls.length; i++) {
                 
                 // Applying Pythagorean equation to find the distance 
                 // between the click and the center of the circle. 
-                var dx = x - balls[i].x; // Δx.
-                var dy = y - balls[i].y; // Δy.
+                var dx = mouseX - balls[i].x; // Δx.
+                var dy = mouseY - balls[i].y; // Δy.
                 var d = Math.sqrt(dx * dx + dy * dy); // Distance.
 
-                if (d <= balls[i].radius) { // If circle is clicked.
-                    balls[i].color = (balls[i].color === "red") ? "blue" : "red";
+                // Avoiding two circles of being selected in the same click.
+                if ((d <= balls[i].radius) && d < shorterDistance) {
+                    clickedBall = balls[i];
+                    shorterDistance = d; // Let's keep the shorter distance value to decide which ball was clicked.
                 }
+            }
+
+            if (clickedBall) {
+                clickedBall.color = (clickedBall.color === "red") ? "blue" : "red";
             }
         }
 
