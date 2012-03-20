@@ -20,6 +20,7 @@ var bouncyColors = (function() {
     var canvas = game.querySelector("canvas");
     var ctx = canvas.getContext("2d");
     var balls = new Array(10);
+    var tolerance = 4; // Making the player happier. :)
 
     function createGameObjects() {
         for (var i = 0; i < balls.length; i++) {
@@ -75,11 +76,27 @@ var bouncyColors = (function() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (var i = 0; i < balls.length; i++) {
+
+            var radians = balls[i].direction * Math.PI / 180;
+
+            // Drawing the hit area for debug purposes.
+            // ctx.beginPath();
+            // ctx.arc(
+            //     balls[i].x - (tolerance * Math.cos(radians)), 
+            //     balls[i].y - (tolerance * Math.sin(radians)), 
+            //     balls[i].radius + tolerance, 
+            //     0, 2 * Math.PI
+            // );
+            // ctx.fillStyle = "#FFFF00";
+            // ctx.fill();
+            // ctx.closePath();
+            
             // Drawing the ball.
             ctx.beginPath();
             ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
             ctx.fillStyle = balls[i].color;
             ctx.fill();
+            ctx.closePath();
         }
     }
 
@@ -90,23 +107,23 @@ var bouncyColors = (function() {
             // Mouse coordinates.
             var mouseX = e.offsetX; 
             var mouseY = e.offsetY; 
-
-            var tolerance = 4; // Making the player happier. :)
             var shorterDistance = 999999;
             var clickedBall = null;
 
             for (var i = 0; i < balls.length; i++) {
+    
+                var radians = balls[i].direction * Math.PI / 180;
                 
                 // Applying Pythagorean equation to find the distance 
-                // between the click and the center of the circle. 
-                var dx = mouseX - balls[i].x; // Δx.
-                var dy = mouseY - balls[i].y; // Δy.
-                var d = Math.sqrt(dx * dx + dy * dy); // Distance.
+                // between the click and the center of the hit area circle. 
+                var dx = mouseX - balls[i].x + (tolerance * Math.cos(radians)); // Δx.
+                var dy = mouseY - balls[i].y + (tolerance * Math.sin(radians)); // Δy.
+                var distance = Math.sqrt(dx * dx + dy * dy); // Distance.
 
                 // Avoiding two circles of being selected in the same click.
-                if ((d <= balls[i].radius + tolerance) && d < shorterDistance) {
+                if ((distance <= balls[i].radius + tolerance) && distance < shorterDistance) {
                     clickedBall = balls[i];
-                    shorterDistance = d; // Let's keep the shorter distance value to decide which ball was clicked.
+                    shorterDistance = distance; // Let's keep the shorter distance value to decide which ball was clicked.
                 }
             }
 
