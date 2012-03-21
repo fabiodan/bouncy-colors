@@ -19,8 +19,8 @@ var bouncyColors = (function() {
     var game = document.querySelector("#bouncy-colors");
     var canvas = game.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var numBalls = 50;
-    var balls = []
+    var numBalls = 10;
+    var balls = [];
     var tolerance = 4; // Making the player happier. :)
 
     function createGameObjects() {
@@ -29,7 +29,7 @@ var bouncyColors = (function() {
                 radius : 20,
                 color : "#0000FF",
                 direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
-                speed : 0
+                speed : 2
             };
 
             var placeOk = false;
