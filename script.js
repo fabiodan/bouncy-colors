@@ -34,11 +34,13 @@ var bouncyColors = (function() {
 
             var placeOk = false;
 
+            // Setting new position until the objects don't collide.
             while (!placeOk) {
+            
                 // Setting the ball position, keeping the limits based on the ball radius instead of its center.
                 ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
                 ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
-
+                
                 placeOk = canStartHere(ball);
             }
 
@@ -46,7 +48,9 @@ var bouncyColors = (function() {
         }
     }
 
+    // Checking if the game objects start in the same place.
     function canStartHere(ball) {
+
         for (var i = 0; i < balls.length; i++) {
            if (checkObjectsCollision(ball, balls[i])) {
                 return false;
@@ -56,7 +60,9 @@ var bouncyColors = (function() {
         return true;
     }
 
+    // Collision detection between two objects.
     function checkObjectsCollision(ball1, ball2) {
+
         var dx = ball2.x - ball1.x;
         var dy = ball2.y - ball1.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
