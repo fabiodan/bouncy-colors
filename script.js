@@ -19,30 +19,55 @@ var bouncyColors = (function() {
     var game = document.querySelector("#bouncy-colors");
     var canvas = game.querySelector("canvas");
     var ctx = canvas.getContext("2d");
-    var balls = new Array(10);
+    var numBalls = 50;
+    var balls = []
     var tolerance = 4; // Making the player happier. :)
 
     function createGameObjects() {
-        for (var i = 0; i < balls.length; i++) {
+        for (var i = 0; i < numBalls; i++) {
             var ball = {
                 radius : 20,
                 color : "#0000FF",
                 direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
-                speed : 2
+                speed : 0
             };
 
-            // Setting the ball position, keeping the limits based on the ball radius instead of its center.
-            ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
-            ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
+            var placeOk = false;
 
-            balls[i] = ball; // Populating balls collection.
+            while (!placeOk) {
+                // Setting the ball position, keeping the limits based on the ball radius instead of its center.
+                ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
+                ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
+
+                placeOk = canStartHere(ball);
+            }
+
+            balls.push(ball); // Populating balls collection.
         }
+    }
+
+    function canStartHere(ball) {
+        for (var i = 0; i < balls.length; i++) {
+           if (checkObjectsCollision(ball, balls[i])) {
+                return false;
+           }
+        }
+
+        return true;
+    }
+
+    function checkObjectsCollision(ball1, ball2) {
+        var dx = ball2.x - ball1.x;
+        var dy = ball2.y - ball1.y;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+
+        return (distance <= ball1.radius + ball2.radius) ? true : false;
     }
 
     // Update game objects data.
     function updateObjectsData() {
 
-        for (var i = 0; i < balls.length; i++) {
+        for (var i = 0; i < numBalls; i++) {
 
             // JavaScript trig functions expect or return angles in radians.
             var radians = balls[i].direction * Math.PI / 180;
@@ -55,7 +80,7 @@ var bouncyColors = (function() {
 
     function checkWallsCollision() {
 
-        for (var i = 0; i < balls.length; i++) {
+        for (var i = 0; i < numBalls; i++) {
 
             // Walls collision detection.
             if ( balls[i].x - balls[i].radius <= 0 || balls[i].x + balls[i].radius >= canvas.width) {
@@ -75,7 +100,7 @@ var bouncyColors = (function() {
         // Cleaning screen.
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        for (var i = 0; i < balls.length; i++) {
+        for (var i = 0; i < numBalls; i++) {
 
             var radians = balls[i].direction * Math.PI / 180;
 
@@ -110,7 +135,7 @@ var bouncyColors = (function() {
             var shorterDistance = 999999;
             var clickedBall = null;
 
-            for (var i = 0; i < balls.length; i++) {
+            for (var i = 0; i < numBalls; i++) {
     
                 var radians = balls[i].direction * Math.PI / 180;
                 
