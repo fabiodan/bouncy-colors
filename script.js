@@ -138,8 +138,8 @@ var bouncyColors = (function() {
         function checkObjectClick(e) {
 
             // Mouse coordinates.
-            var mouseX = e.offsetX; 
-            var mouseY = e.offsetY; 
+            var mouseX = e.offsetX || e.pageX - e.target.offsetLeft; 
+            var mouseY = e.offsetY|| e.pageY - e.target.offsetTop; 
             var shorterDistance = 999999;
             var clickedBall = null;
 
