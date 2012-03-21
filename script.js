@@ -63,6 +63,8 @@ var bouncyColors = (function() {
     // Collision detection between two objects.
     function checkObjectsCollision(ball1, ball2) {
 
+        // Applying Pythagorean equation to find out the distance 
+        // between the objects center and checking if they collide. 
         var dx = ball2.x - ball1.x;
         var dy = ball2.y - ball1.y;
         var distance = Math.sqrt(dx * dx + dy * dy);
@@ -178,7 +180,7 @@ var bouncyColors = (function() {
         init : function() {
 
             createGameObjects();
-            drawObjects();
+            drawObjects(); // Drawing the initial state.
             bindEvents();
             setGameCycle();
         }
