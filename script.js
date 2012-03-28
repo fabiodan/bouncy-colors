@@ -128,11 +128,12 @@ var bouncyColors = (function() {
             // ctx.closePath();
             
             // Drawing the ball.
-            ctx.beginPath();
+            // ctx.beginPath();
             // ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
             // ctx.fillStyle = balls[i].color;
             // ctx.fill();
-            
+            // ctx.closePath();
+
             // Drawing ball sprite.
             ctx.drawImage(
                 sprite, 
@@ -141,7 +142,6 @@ var bouncyColors = (function() {
                 diameter,
                 diameter
             );
-            ctx.closePath();
         }
     }
 
