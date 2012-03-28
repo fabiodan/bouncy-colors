@@ -22,6 +22,8 @@ var bouncyColors = (function() {
     var numBalls = 10;
     var balls = [];
     var tolerance = 4; // Making the player happier. :)
+    var sprite = new Image();
+    sprite.src = "ball.png";
 
     function createGameObjects() {
         for (var i = 0; i < numBalls; i++) {
@@ -109,7 +111,8 @@ var bouncyColors = (function() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (var i = 0; i < numBalls; i++) {
-
+            var radius = balls[i].radius;
+            var diameter = radius * 2;
             var radians = balls[i].direction * Math.PI / 180;
 
             // Drawing the hit area for debug purposes.
@@ -126,9 +129,18 @@ var bouncyColors = (function() {
             
             // Drawing the ball.
             ctx.beginPath();
-            ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
-            ctx.fillStyle = balls[i].color;
-            ctx.fill();
+            // ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
+            // ctx.fillStyle = balls[i].color;
+            // ctx.fill();
+            
+            // Drawing ball sprite.
+            ctx.drawImage(
+                sprite, 
+                balls[i].x - radius, 
+                balls[i].y - radius, 
+                diameter,
+                diameter
+            );
             ctx.closePath();
         }
     }
