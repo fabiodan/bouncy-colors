@@ -22,17 +22,23 @@ var bouncyColors = (function() {
     var numBalls = 10;
     var balls = [];
     var tolerance = 4; // Making the player happier. :)
-    var sprite = new Image();
-    sprite.src = "ball.png";
+    var spriteSheet = new Image();
+    spriteSheet.src = "balls.png";
+    spriteSheet.length = 2; // Total of images in the sprite sheet.
 
     function createGameObjects() {
         for (var i = 0; i < numBalls; i++) {
             var ball = {
                 radius : 20,
-                color : "#0000FF",
+
+                // When the game starts, all objects are rendered 
+                // with the first image from the sprite sheet.
+                image : 0,
                 direction : Math.floor(Math.random() * (360 + 1)), // Degrees.
                 speed : 2
             };
+
+            ball.diameter = ball.radius * 2;
 
             var placeOk = false;
 
@@ -112,7 +118,6 @@ var bouncyColors = (function() {
 
         for (var i = 0; i < numBalls; i++) {
             var radius = balls[i].radius;
-            var diameter = radius * 2;
             var radians = balls[i].direction * Math.PI / 180;
 
             // Drawing the hit area for debug purposes.
@@ -134,13 +139,20 @@ var bouncyColors = (function() {
             // ctx.fill();
             // ctx.closePath();
 
-            // Drawing ball sprite.
             ctx.drawImage(
-                sprite, 
-                balls[i].x - radius, 
-                balls[i].y - radius, 
-                diameter,
-                diameter
+                spriteSheet, 
+
+                // Slicing the image from the sprite sheet.
+                0 + balls[i].image, // X coordinate.
+                0, // Y coordinate.
+                spriteSheet.width / spriteSheet.length, // Width.
+                spriteSheet.height, // Height.
+
+                // Drawing it on the canvas.
+                balls[i].x - radius, // X coordinate.
+                balls[i].y - radius, // Y coordinate.
+                balls[i].diameter, // Width.
+                balls[i].diameter // Height.
             );
         }
     }
@@ -173,7 +185,9 @@ var bouncyColors = (function() {
             }
 
             if (clickedBall) {
-                clickedBall.color = (clickedBall.color === "red") ? "blue" : "red";
+
+                // Setting the new image for the ball.
+                clickedBall.image = (clickedBall.image ? 0 : 1) * spriteSheet.width / spriteSheet.length;
             }
         }
 
