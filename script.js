@@ -21,13 +21,13 @@ var bouncyColors = (function() {
     var ctx = canvas.getContext("2d");
     var numBalls = 10;
     var balls = [];
-    var tolerance = 4; // Making the player happier. :)
     var spriteSheet = new Image();
     spriteSheet.src = "balls.png";
     spriteSheet.length = 2; // Total of images in the sprite sheet.
 
     function createGameObjects() {
         for (var i = 0; i < numBalls; i++) {
+
             var ball = {
                 radius : 20,
 
@@ -38,6 +38,13 @@ var bouncyColors = (function() {
                 speed : 2
             };
 
+            // JavaScript trig functions expect or return angles in radians.
+            var radians = ball.direction * Math.PI / 180;
+
+            // Using trig functions to find the x and y values.
+            ball.velocityX = ball.speed * Math.cos(radians);
+            ball.velocityY = ball.speed * Math.sin(radians);
+
             ball.diameter = ball.radius * 2;
 
             var placeOk = false;
@@ -46,11 +53,14 @@ var bouncyColors = (function() {
             while (!placeOk) {
             
                 // Setting the ball position, keeping the limits based on the ball radius instead of its center.
-                ball.x = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
-                ball.y = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
+                ball.nextX = Math.floor(Math.random() * (canvas.width - (ball.radius * 2)) + ball.radius);
+                ball.nextY = Math.floor(Math.random() * (canvas.height - (ball.radius * 2)) + ball.radius);
                 
                 placeOk = canStartHere(ball);
             }
+
+            ball.x = ball.nextX;
+            ball.y = ball.nextY;
 
             balls.push(ball); // Populating balls collection.
         }
@@ -84,13 +94,8 @@ var bouncyColors = (function() {
     function updateObjectsData() {
 
         for (var i = 0; i < numBalls; i++) {
-
-            // JavaScript trig functions expect or return angles in radians.
-            var radians = balls[i].direction * Math.PI / 180;
-
-            // Using trig functions to find the x and y values.
-            balls[i].x += balls[i].speed * Math.cos(radians);
-            balls[i].y += balls[i].speed * Math.sin(radians);
+            balls[i].nextX = balls[i].x + balls[i].velocityX;
+            balls[i].nextY = balls[i].y + balls[i].velocityY;
         }
     }
 
@@ -99,14 +104,25 @@ var bouncyColors = (function() {
         for (var i = 0; i < numBalls; i++) {
 
             // Walls collision detection.
-            if ( balls[i].x - balls[i].radius <= 0 || balls[i].x + balls[i].radius >= canvas.width) {
-                balls[i].direction = 180 - balls[i].direction;
-                updateObjectsData();                
+            if (balls[i].nextX + balls[i].radius > canvas.width) {
+                balls[i].velocityX = balls[i].velocityX * -1;
+                balls[i].nextX = canvas.width - balls[i].radius;
             }
-            if ( balls[i].y - balls[i].radius <= 0 || balls[i].y + balls[i].radius >= canvas.height) {
-                balls[i].direction = 360 - balls[i].direction;
-                updateObjectsData();                
+
+             else if (balls[i].nextX - balls[i].radius < 0) {
+                balls[i].velocityX = balls[i].velocityX * -1;
+                balls[i].nextX = balls[i].radius;
             }
+
+             else if (balls[i].nextY + balls[i].radius > canvas.height) {
+                balls[i].velocityY = balls[i].velocityY * -1;
+                balls[i].nextY = canvas.height - balls[i].radius;
+            }
+
+             else if (balls[i].nextY - balls[i].radius < 0) {
+                balls[i].velocityY = balls[i].velocityY * -1;
+                balls[i].nextY = balls[i].radius;
+            }  
         }
     }    
 
@@ -120,18 +136,9 @@ var bouncyColors = (function() {
             var radius = balls[i].radius;
             var radians = balls[i].direction * Math.PI / 180;
 
-            // Drawing the hit area for debug purposes.
-            // ctx.beginPath();
-            // ctx.arc(
-            //     balls[i].x - (tolerance * Math.cos(radians)), 
-            //     balls[i].y - (tolerance * Math.sin(radians)), 
-            //     balls[i].radius + tolerance, 
-            //     0, 2 * Math.PI
-            // );
-            // ctx.fillStyle = "#FFFF00";
-            // ctx.fill();
-            // ctx.closePath();
-            
+            balls[i].x = balls[i].nextX;
+            balls[i].y = balls[i].nextY;
+
             // Drawing the ball.
             // ctx.beginPath();
             // ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
@@ -173,12 +180,12 @@ var bouncyColors = (function() {
                 
                 // Applying Pythagorean equation to find the distance 
                 // between the click and the center of the hit area circle. 
-                var dx = mouseX - balls[i].x + (tolerance * Math.cos(radians)); // Δx.
-                var dy = mouseY - balls[i].y + (tolerance * Math.sin(radians)); // Δy.
+                var dx = mouseX - balls[i].x; // Δx.
+                var dy = mouseY - balls[i].y; // Δy.
                 var distance = Math.sqrt(dx * dx + dy * dy); // Distance.
 
                 // Avoiding two circles of being selected in the same click.
-                if ((distance <= balls[i].radius + tolerance) && distance < shorterDistance) {
+                if (distance <= balls[i].radius && distance < shorterDistance) {
                     clickedBall = balls[i];
                     shorterDistance = distance; // Let's keep the shorter distance value to decide which ball was clicked.
                 }
