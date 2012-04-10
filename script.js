@@ -46,6 +46,7 @@ var bouncyColors = (function() {
             ball.velocityY = ball.speed * Math.sin(radians);
 
             ball.diameter = ball.radius * 2;
+            ball.mass = ball.diameter;
 
             var placeOk = false;
 
@@ -83,8 +84,8 @@ var bouncyColors = (function() {
 
         // Applying Pythagorean equation to find out the distance 
         // between the objects center and checking if they collide. 
-        var dx = ball2.x - ball1.x;
-        var dy = ball2.y - ball1.y;
+        var dx = ball2.nextX - ball1.nextX;
+        var dy = ball2.nextY - ball1.nextY;
         var distance = Math.sqrt(dx * dx + dy * dy);
 
         return (distance <= ball1.radius + ball2.radius) ? true : false;
@@ -97,6 +98,66 @@ var bouncyColors = (function() {
             balls[i].nextX = balls[i].x + balls[i].velocityX;
             balls[i].nextY = balls[i].y + balls[i].velocityY;
         }
+    }
+
+    function collide() {
+
+        for (var i = 0; i < balls.length; i++) {
+            for (var j = i + 1; j < balls.length; j++) {
+                if (checkObjectsCollision(balls[i], balls[j])) {
+                    collideBalls(balls[i], balls[j]);
+                }
+            }
+        }
+    }
+
+    function collideBalls(ball1,ball2) {
+        
+        // Calculating the difference between the center points of each ball.
+        var dx = ball1.nextX - ball2.nextX; 
+        var dy = ball1.nextY - ball2.nextY;
+
+        // Finding the angle of the collision (or line of action) between the two balls.
+        // We need this value so that we can determine how the balls will react when they collide.
+        var collisionAngle = Math.atan2(dy, dx);
+
+        // Calculating the velocity vector for each ball given the x and y velocities that
+        // existed before the collision occurred.
+        var speed1 = Math.sqrt(ball1.velocityX * ball1.velocityX + ball1.velocityY * ball1.velocityY);
+        var speed2 = Math.sqrt(ball2.velocityX * ball2.velocityX + ball2.velocityY * ball2.velocityY);
+
+        // Calculating the angles (in radians) for each ball given its current velocities.
+        var direction1 = Math.atan2(ball1.velocityY, ball1.velocityX); 
+        var direction2 = Math.atan2(ball2.velocityY, ball2.velocityX);
+
+        // We need to rotate the vectors counterclockwise so that we can plug those values 
+        // into the equation for conservation of momentum. Basically, we are taking the angle 
+        // of collision and making it flat so we can bounce the balls.
+        var velocityX_1 = speed1 * Math.cos(direction1 - collisionAngle); 
+        var velocityY_1 = speed1 * Math.sin(direction1 - collisionAngle); 
+        var velocityX_2 = speed2 * Math.cos(direction2 - collisionAngle); 
+        var velocityY_2 = speed2 * Math.sin(direction2 - collisionAngle);
+
+        // We take the mass values of each ball and update their x and y velocities based on 
+        // the law of conservation of momentum. Actually, only the x velocity needs to be updated,
+        // the y velocity remains constant.
+        var final_velocityX_1 = ((ball1.mass - ball2.mass) * velocityX_1 + (ball2.mass + ball2.mass) * velocityX_2)/(ball1.mass + ball2.mass);
+        var final_velocityX_2 = ((ball1.mass + ball1.mass) * velocityX_1 + (ball2.mass - ball1.mass) * velocityX_2)/(ball1.mass + ball2.mass);
+        var final_velocityY_1 = velocityY_1; 
+        var final_velocityY_2 = velocityY_2;
+
+        // After we have our final velocities, we rotate our angles back again so that the collision 
+        // angle is preserved.
+        ball1.velocityX = Math.cos(collisionAngle) * final_velocityX_1 + Math.cos(collisionAngle + Math.PI/2) * final_velocityY_1; 
+        ball1.velocityY = Math.sin(collisionAngle) * final_velocityX_1 + Math.sin(collisionAngle + Math.PI/2) * final_velocityY_1; 
+        ball2.velocityX = Math.cos(collisionAngle) * final_velocityX_2 + Math.cos(collisionAngle + Math.PI/2) * final_velocityY_2; 
+        ball2.velocityY = Math.sin(collisionAngle) * final_velocityX_2 + Math.sin(collisionAngle + Math.PI/2) * final_velocityY_2;
+
+        // Updating new values for rendering.
+        ball1.nextX = (ball1.nextX += ball1.velocityX); 
+        ball1.nextY = (ball1.nextY += ball1.velocityY); 
+        ball2.nextX = (ball2.nextX += ball2.velocityX); 
+        ball2.nextY = (ball2.nextY += ball2.velocityY);
     }
 
     function checkWallsCollision() {
@@ -206,6 +267,7 @@ var bouncyColors = (function() {
         window.requestAnimFrame(setGameCycle);
         updateObjectsData();
         checkWallsCollision();
+        collide();
         drawObjects();
     }
 
