@@ -154,10 +154,10 @@ var bouncyColors = (function() {
         ball2.velocityY = Math.sin(collisionAngle) * final_velocityX_2 + Math.sin(collisionAngle + Math.PI/2) * final_velocityY_2;
 
         // Updating new values for rendering.
-        ball1.nextX = (ball1.nextX += ball1.velocityX); 
-        ball1.nextY = (ball1.nextY += ball1.velocityY); 
-        ball2.nextX = (ball2.nextX += ball2.velocityX); 
-        ball2.nextY = (ball2.nextY += ball2.velocityY);
+        ball1.nextX += ball1.velocityX; 
+        ball1.nextY += ball1.velocityY; 
+        ball2.nextX += ball2.velocityX; 
+        ball2.nextY += ball2.velocityY;
     }
 
     function checkWallsCollision() {
