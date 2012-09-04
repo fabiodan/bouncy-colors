@@ -25,10 +25,15 @@ var bouncyColors = (function() {
     spriteSheet.src = "balls.png";
     spriteSheet.length = 2; // Total of images in the sprite sheet.
 
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for (var x = 0; x < vendors.length; x++) {
-        if (ctx[vendors[x] + 'ImageSmoothingEnabled']) {
-            ctx[vendors[x] + 'ImageSmoothingEnabled'] = false;
+    if (ctx.imageSmoothingEnabled) {
+        ctx.imageSmoothingEnabled = false;
+    } else {
+        var vendors = ['ms', 'moz', 'webkit', 'o'];
+        for (var x = 0; x < vendors.length; x++) {
+            if (ctx[vendors[x] + 'ImageSmoothingEnabled']) {
+                ctx[vendors[x] + 'ImageSmoothingEnabled'] = false;
+                break;
+            }
         }
     }
 
