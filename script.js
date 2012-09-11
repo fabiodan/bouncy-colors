@@ -207,17 +207,9 @@ var bouncyColors = (function() {
 
         for (var i = 0; i < numBalls; i++) {
             var radius = balls[i].radius;
-            var radians = balls[i].direction * Math.PI / 180;
 
             balls[i].x = balls[i].nextX;
             balls[i].y = balls[i].nextY;
-
-            // Drawing the ball.
-            // ctx.beginPath();
-            // ctx.arc(balls[i].x, balls[i].y, balls[i].radius, 0, 2 * Math.PI);
-            // ctx.fillStyle = balls[i].color;
-            // ctx.fill();
-            // ctx.closePath();
 
             ctx.drawImage(
                 spriteSheet, 
@@ -249,8 +241,6 @@ var bouncyColors = (function() {
 
             for (var i = 0; i < numBalls; i++) {
     
-                var radians = balls[i].direction * Math.PI / 180;
-                
                 // Applying Pythagorean equation to find the distance 
                 // between the click and the center of the hit area circle. 
                 var dx = mouseX - balls[i].x; // Δx.
